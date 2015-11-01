@@ -1,4 +1,4 @@
-// generated on 2015-10-30 using generator-gulp-webapp 1.0.3
+// generated on 2015-11-01 using generator-gulp-webapp 1.0.3
 import gulp from 'gulp';
 import gulpLoadPlugins from 'gulp-load-plugins';
 import browserSync from 'browser-sync';
@@ -123,7 +123,7 @@ gulp.task('serve:test', () => {
     port: 9000,
     ui: false,
     server: {
-      baseDir: 'test',
+      baseDir: ['test', 'app'],
       routes: {
         '/bower_components': 'bower_components'
       }
