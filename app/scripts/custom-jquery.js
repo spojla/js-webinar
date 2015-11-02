@@ -2,7 +2,12 @@ var $ = function(selector){
   var hasClass = function(element, cls) {
     return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
   }
-  var result = document.querySelectorAll(selector);
+  var cssToCamelCase = function(cssString){
+    return cssString.replace(/-([a-z])/gi, function(s, group1) {
+        return group1.toUpperCase();
+    });
+  }
+  var result = selector instanceof HTMLElement ? [selector] : document.querySelectorAll(selector);
   var resultChildren = [];
   result.each = function(callback){
     for (var i = 0; i < result.length; i++){
@@ -24,7 +29,13 @@ var $ = function(selector){
       var items = arguments;
       return result.each(function(i){
         for (var i = 0; i < items.length; i++){
-          this.appendChild(items[i].cloneNode());
+          if (items[i].toString() == '[object Array]' || items[i].toString() == '[object NodeList]') {
+            for (var j = 0; j < items[i].length; j++){
+              this.appendChild(items[i][j].cloneNode());             
+            }
+          } else {
+            this.appendChild(items[i].cloneNode());
+          }
         };
       });
     },
@@ -58,8 +69,17 @@ var $ = function(selector){
       });
       return resultChildren;
     },
-    css: function(){
-      
+    css: function(arg){
+      if (arg.toString() == '[object Object]') {
+        return result.each(function(i){         
+          Object.assign(this.style, arg);
+        });
+      } else if (typeof arg == 'string') {
+        var funRes;
+        if (result.length)
+          funRes = result[0].style[cssToCamelCase(arg)]
+        return funRes;
+      }
     },
     data: function(){
       

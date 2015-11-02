@@ -6,6 +6,7 @@
       var node = $;
       assert.isFunction(node);
     });
+    //TODO: with dom element
     describe('with class', function () {
       var myEl1, myEl2, otherEl, match;
       beforeEach(function() {
@@ -76,6 +77,7 @@
           });
         });
         describe('append', function () { 
+          //TODO: test arg as array
           var myInnerEl;
           beforeEach(function() {
             var otherInnerEl = myEl1.appendChild(document.createElement( 'div' ));
@@ -301,6 +303,75 @@
             assert.isFunction(res.on);
             assert.isFunction(res.one);
             assert.isFunction(res.each);
+          });
+          //TODO: children with query selector, more children methods test
+        });
+        
+        describe('css', function () { 
+          beforeEach(function() {
+            myEl1.style.backgroundColor = 'red';
+            myEl2.style.backgroundColor = 'blue';
+            otherEl.style.backgroundColor = 'green';         
+          }); 
+          describe('first argument is string', function () { 
+            it('should return first element css', function () {
+              var res = match.css('background-color');
+              
+              assert.equal(res, 'red')
+            });
+            
+            it('when empty match should return undefined', function () {
+              var notMatch = $('.not-existing-class');
+              var res = notMatch.css('background-color');
+              
+              assert.isUndefined(res);
+            });
+          });
+          
+          describe('first argument is object with js syntax', function () { 
+            it('should change first element css', function () {
+              match.css({backgroundColor: 'black'});
+            
+              assert.equal(myEl1.style.backgroundColor, 'black')
+            });
+            
+            it('should change second element css', function () {
+              match.css({backgroundColor: 'black'});
+            
+              assert.equal(myEl2.style.backgroundColor, 'black')
+            });
+            
+            it('not matched el should stay', function () {
+              match.css({backgroundColor: 'black'});
+            
+              assert.equal(otherEl.style.backgroundColor, 'green')
+            });
+            
+            it('should return same match', function () {
+              var res = match.css({backgroundColor: 'black'});
+              
+              assert.equal(res, match)
+            });
+          });
+          
+          describe('first argument is object with css syntax', function () { 
+            it('should change first element css', function () {
+              match.css({'background-color': 'black'});
+            
+              assert.equal(myEl1.style.backgroundColor, 'black')
+            });
+            
+            it('should change second element css', function () {
+              match.css({'background-color': 'black'});
+            
+              assert.equal(myEl2.style.backgroundColor, 'black')
+            });
+            
+            it('should return same match', function () {
+              var res = match.css({'background-color': 'black'});
+              
+              assert.equal(res, match)
+            });
           });
         });
         
