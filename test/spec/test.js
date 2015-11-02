@@ -109,10 +109,198 @@
             });
           });
           
+          describe('should add two children to both elements', function () {                         
+            it('should add two children to first element', function () {              
+              match.append(myInnerEl, myInnerEl.cloneNode());
+              
+              assert.lengthOf(myEl1.childNodes, 3);
+              assert.equal(myEl1.childNodes[1].className, 'my-inner-class');
+              assert.equal(myEl1.childNodes[2].className, 'my-inner-class');
+            });
+            it('should add two children to second element', function () {              
+              match.append(myInnerEl, myInnerEl.cloneNode());
+              
+              assert.lengthOf(myEl1.childNodes, 3);
+              assert.equal(myEl2.childNodes[1].className, 'my-inner-class');
+              assert.equal(myEl2.childNodes[2].className, 'my-inner-class');
+            });
+            it('should not add child to other element', function () {              
+              match.append(myInnerEl, myInnerEl.cloneNode());
+              
+              assert.lengthOf(otherEl.childNodes, 1);
+              assert.equal(otherEl.childNodes[0].className, 'other-inner-class');
+            });
+          });
+          
+          describe('should add seven children to both elements', function () {                         
+            it('should add seven children to first element', function () {              
+              match.append(myInnerEl, 
+                myInnerEl.cloneNode(), 
+                myInnerEl.cloneNode(), 
+                myInnerEl.cloneNode(), 
+                myInnerEl.cloneNode(), 
+                myInnerEl.cloneNode(), 
+                myInnerEl.cloneNode()
+                );
+              
+              assert.lengthOf(myEl1.childNodes, 8);
+              assert.equal(myEl1.childNodes[1].className, 'my-inner-class');
+              assert.equal(myEl1.childNodes[2].className, 'my-inner-class');
+              assert.equal(myEl1.childNodes[3].className, 'my-inner-class');
+              assert.equal(myEl1.childNodes[4].className, 'my-inner-class');
+              assert.equal(myEl1.childNodes[5].className, 'my-inner-class');
+              assert.equal(myEl1.childNodes[6].className, 'my-inner-class');
+              assert.equal(myEl1.childNodes[7].className, 'my-inner-class');
+            });
+            it('should add seven children to second element', function () {              
+              match.append(myInnerEl, 
+                myInnerEl.cloneNode(), 
+                myInnerEl.cloneNode(), 
+                myInnerEl.cloneNode(), 
+                myInnerEl.cloneNode(), 
+                myInnerEl.cloneNode(), 
+                myInnerEl.cloneNode()
+                );
+              
+              assert.lengthOf(myEl2.childNodes, 8);
+              assert.equal(myEl2.childNodes[1].className, 'my-inner-class');
+              assert.equal(myEl2.childNodes[2].className, 'my-inner-class');
+              assert.equal(myEl2.childNodes[3].className, 'my-inner-class');
+              assert.equal(myEl2.childNodes[4].className, 'my-inner-class');
+              assert.equal(myEl2.childNodes[5].className, 'my-inner-class');
+              assert.equal(myEl2.childNodes[6].className, 'my-inner-class');
+              assert.equal(myEl2.childNodes[7].className, 'my-inner-class');
+            });
+            it('should not add child to other element', function () {              
+              match.append(myInnerEl, 
+                myInnerEl.cloneNode(), 
+                myInnerEl.cloneNode(), 
+                myInnerEl.cloneNode(), 
+                myInnerEl.cloneNode(), 
+                myInnerEl.cloneNode(), 
+                myInnerEl.cloneNode()
+                );
+              
+              assert.lengthOf(otherEl.childNodes, 1);
+              assert.equal(otherEl.childNodes[0].className, 'other-inner-class');
+            });
+          });
+          
           it('should return same match', function () {
             var res = match.append(myInnerEl)
             
             assert.equal(res, match)
+          });
+        });
+        
+        describe('html', function () { 
+          beforeEach(function() {
+            var otherInnerEl = myEl1.appendChild(document.createElement( 'div' ));
+            otherInnerEl.className = 'my-inner-class';
+            var otherInnerEl = myEl2.appendChild(document.createElement( 'div' ));
+            otherInnerEl.className = 'other-inner-class';
+            var otherInnerEl = otherEl.appendChild(document.createElement( 'div' ));
+            otherInnerEl.className = 'other-inner-class';          
+          }); 
+          it('should return first element html', function () {
+            var res = match.html();
+            
+            assert.equal(res, '<div class="my-inner-class"></div>')
+          });
+          
+          it('when empty match should return undefined', function () {
+            var notMatch = $('.not-existing-class');
+            var res = notMatch.html();
+            
+            assert.isUndefined(res);
+          });
+          
+          describe('argument provided', function () { 
+            it('should change first element inner html', function () {
+              match.html('<div/>');
+              
+              assert.equal(myEl1.childNodes[0].className, '')
+            });
+            
+            it('should change second element inner html', function () {
+              match.html('<div/>');
+              
+              assert.equal(myEl2.childNodes[0].className, '')
+            });
+            
+            it('should return same match', function () {
+              var res = match.html('<div/>')
+              
+              assert.equal(res, match)
+            });
+          });
+        });
+        
+        describe('attr', function () { 
+          it('should return first element attribute', function () {
+            var res = match.attr('class');
+            
+            assert.equal(res, 'my-class')
+          });
+          
+          it('when empty match should return undefined', function () {
+            var notMatch = $('.not-existing-class');
+            var res = notMatch.attr('class');
+            
+            assert.isUndefined(res);
+          });
+          
+          describe('second argument provided', function () { 
+            it('should change first element attribute', function () {
+              match.attr('class', 'new-class');
+            
+              assert.equal(myEl1.className, 'new-class')
+            });
+            
+            it('should change second element attribute', function () {
+              match.attr('class', 'new-class');
+            
+              assert.equal(myEl2.className, 'new-class')
+            });
+            
+            it('should return same match', function () {
+              var res = match.attr('class', 'new-class');
+              
+              assert.equal(res, match)
+            });
+          });
+        });
+        
+        describe('children', function () { 
+          beforeEach(function() {
+            var otherInnerEl = myEl1.appendChild(document.createElement( 'div' ));
+            otherInnerEl.className = 'my-inner-class';
+            var otherInnerEl = myEl2.appendChild(document.createElement( 'div' ));
+            otherInnerEl.className = 'other-inner-class';
+            var otherInnerEl = otherEl.appendChild(document.createElement( 'div' ));
+            otherInnerEl.className = 'other-inner-class';          
+          }); 
+          
+          it('should return both elements children', function () {
+            var res = match.children();
+            
+            assert.lengthOf(res, 2);
+            assert.equal(res[0].className, 'my-inner-class');
+            assert.equal(res[1].className, 'other-inner-class');
+          });
+          
+          it('should return an object with jQuery methods', function () {
+            var res = match.children();
+            assert.isFunction(res.addClass);
+            assert.isFunction(res.append);
+            assert.isFunction(res.html);
+            assert.isFunction(res.attr);
+            assert.isFunction(res.children);
+            assert.isFunction(res.css);
+            assert.isFunction(res.data);
+            assert.isFunction(res.on);
+            assert.isFunction(res.one);
+            assert.isFunction(res.each);
           });
         });
         
