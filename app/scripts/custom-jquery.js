@@ -3,17 +3,26 @@ var $ = function(selector){
     return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
   }
   var result = document.querySelectorAll(selector);
+  result.each = function(callback){
+    for (var i = 0; i < result.length; i++){
+      if (callback.call(result[i], i) === false){
+        break;
+      }
+    }
+    return result;  
+  }
   Object.assign(result, {
     addClass: function(newClassName){
-      for (var i = 0; i < result.length; i++){
+      return result.each(function(i){
         if (!hasClass(result[i], newClassName)) {
           result[i].className += ' ' + newClassName 
-        }
-      }
-      return result; // TODO: check problems after chain
+        }  
+      });
     },
-    append: function(){
-      
+    append: function(item){
+      return result.each(function(i){
+        this.appendChild(item.cloneNode());
+      });
     },
     html: function(){
       
@@ -34,9 +43,6 @@ var $ = function(selector){
       
     },
     one: function(){
-      
-    },
-    each: function(){
       
     }
   });
