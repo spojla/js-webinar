@@ -421,29 +421,99 @@
                                         + "<div class=\'data-el\' data-role=\'page2\' data-last-value=\'44\' data-hidden=\'false\' data-options=\'{\"name\":\"Kate\"}\';></div>";       
               dataMatch = $('.data-el');
             });
-            it('should return native value', function () {
+            it('should return string value', function () {
               var res = dataMatch.data('role');
               
               assert.equal(res, 'page')
             });
             
-            it('should return native value', function () {
+            it('should return number value', function () {
               var res = dataMatch.data('lastValue');
               
               assert.equal(res, '43')
             });
             
-            it('should return native value', function () {
+            it('should return bool value', function () {
               var res = dataMatch.data('hidden');
               
               assert.equal(res, true)
             });
             
-            it('should return native value', function () {
+            it('should return object value', function () {
               var res = dataMatch.data('options');
               
               expect(res).to.deep.equal({name: "John"});
             });
+          });
+          
+          describe('should set html5 data-* attribute', function () {
+            var dataMatch, myRes1, myRes2;
+            beforeEach(function() {
+              myEl1.innerHTML = "<div class=\'data-el\' data-role=\'page\' data-last-value=\'43\' data-hidden=\'true\' data-options=\'{\"name\":\"John\"}\';></div>"  
+                                        + "<div class=\'data-el\' data-role=\'page2\' data-last-value=\'44\' data-hidden=\'false\' data-options=\'{\"name\":\"Kate\"}\';></div>";       
+              dataMatch = $('.data-el');
+              myRes1 = dataMatch[0];
+              myRes2 = dataMatch[1];
+            });
+                        
+            it('should set string value to first element', function () {
+              dataMatch.data('role', 'new-role');
+              
+              var res = myRes1.getAttribute('data-role'); 
+              assert.equal(res, 'new-role')
+            });
+            
+            it('should set string value to second element', function () {
+              dataMatch.data('role', 'new-role');
+              
+              var res = myRes2.getAttribute('data-role'); 
+              assert.equal(res, 'new-role')
+            });
+            
+            it('should set number value to first element', function () {
+              dataMatch.data('role', 1);
+              
+              var res = myRes1.getAttribute('data-role'); 
+              assert.equal(res, '1')
+            });
+            
+            it('should set boolean value to first element', function () {
+              dataMatch.data('role', false);
+              
+              var res = myRes1.getAttribute('data-role');
+              assert.equal(res, 'false')
+            });
+            
+            it('should set object value to first element', function () {
+              dataMatch.data('role', {"prop": 123});
+              
+              var res = myRes1.getAttribute('data-role');
+              assert.equal(res, '{"prop":123}')
+            });
+            
+            it('should return same match', function () {
+              var res = match.data('role', 'new-role');
+              
+              assert.equal(res, match)
+            });
+          });
+        });
+        
+        describe('should get data which where already set', function () {
+          var dataMatch, myRes1, myRes2;
+          beforeEach(function() {
+            myEl1.innerHTML = "<div class=\'data-el\' data-role=\'page\' data-last-value=\'43\' data-hidden=\'true\' data-options=\'{\"name\":\"John\"}\';></div>"  
+                                      + "<div class=\'data-el\' data-role=\'page2\' data-last-value=\'44\' data-hidden=\'false\' data-options=\'{\"name\":\"Kate\"}\';></div>";       
+            dataMatch = $('.data-el');
+            myRes1 = dataMatch[0];
+            myRes2 = dataMatch[1];
+          });
+                      
+          it('should set string value to first element', function () {
+            dataMatch.data('role', 'new-role');
+            
+            var res = dataMatch.data('role'); 
+            assert.equal(res, 'new-role')
           });
         });
       });

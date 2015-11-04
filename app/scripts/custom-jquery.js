@@ -43,7 +43,7 @@ var $ = function(selector){
       });
     },
     html: function(html){
-      if (html) {
+      if (html != undefined) {
         return result.each(function(i){
           this.innerHTML = html;
         });
@@ -55,7 +55,7 @@ var $ = function(selector){
       return funRes;
     },
     attr: function(attrName, attrValue){    
-      if (attrValue) {
+      if (attrValue != undefined) {
         return result.each(function(i){
           this.setAttribute(attrName, attrValue)
         });
@@ -84,7 +84,12 @@ var $ = function(selector){
         return funRes;
       }
     },
-    data: function(dataAttr){
+    data: function(dataAttr, value){
+      if (value != undefined) {
+        return result.each(function(i){
+          this.setAttribute('data-' + hyphenToCamelCase(dataAttr), value.toString() == '[object Object]' ? JSON.stringify(value): value);
+        });
+      }    
       var funRes;
       if (result.length)
         funRes = result[0].getAttribute('data-' + camelCaseToHyphen(dataAttr));
