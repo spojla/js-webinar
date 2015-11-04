@@ -19,41 +19,47 @@
       }
   }
   describe('jQuery call', function () {
+    var myEl1, myEl2, otherEl, match;
+    beforeEach(function() {
+      myEl1 = document.body.appendChild(document.createElement( 'div' ));
+      myEl1.className = 'my-class';
+      myEl2 = document.body.appendChild(document.createElement( 'div' ));
+      myEl2.className = 'my-class';
+      otherEl = document.body.appendChild(document.createElement( 'div' ));
+      otherEl.className = 'other-class';
+    });
+    afterEach(function() {
+      document.body.removeChild(myEl1);
+      document.body.removeChild(myEl2);
+      document.body.removeChild(otherEl);
+    });
     it('should be a function', function () {
       var node = $;
       assert.isFunction(node);
     });
-    //TODO: with dom element
+    describe('with dom element', function () {
+      it('should return one element', function () {
+        match = $(myEl1);
+        assert.lengthOf(match, 1);
+        assert.equal(match[0], myEl1);
+      });
+    });
     describe('with class', function () {
-      var myEl1, myEl2, otherEl, match;
-      beforeEach(function() {
-        myEl1 = document.body.appendChild(document.createElement( 'div' ));
-        myEl1.className = 'my-class';
-        myEl2 = document.body.appendChild(document.createElement( 'div' ));
-        myEl2.className = 'my-class';
-        otherEl = document.body.appendChild(document.createElement( 'div' ));
-        otherEl.className = 'other-class';
-      });
-      afterEach(function() {
-        document.body.removeChild(myEl1);
-        document.body.removeChild(myEl2);
-        document.body.removeChild(otherEl);
-      });
       it('not existing class should return empty array', function () {
-        var match = $('.not-existing-class');
+        match = $('.not-existing-class');
         assert.lengthOf(match, 0);
       });
       it('existing class should return two objects', function () {
-        var match = $('.my-class');
+        match = $('.my-class');
         assert.lengthOf(match, 2);
       });
       it('existing class should return two DOM objects', function () {
-        var match = $('.my-class');
+        match = $('.my-class');
         assert.equal(match[0], myEl1);
         assert.equal(match[1], myEl2);
       });
       it('existing class should return an object with jQuery methods', function () {
-        var match = $('.my-class');
+        match = $('.my-class');
         assert.isFunction(match.addClass);
         assert.isFunction(match.append);
         assert.isFunction(match.html);
@@ -94,7 +100,6 @@
           });
         });
         describe('append', function () { 
-          //TODO: test arg as array
           var myInnerEl;
           beforeEach(function() {
             var otherInnerEl = myEl1.appendChild(document.createElement( 'div' ));
@@ -145,6 +150,29 @@
             });
             it('should not add child to other element', function () {              
               match.append(myInnerEl, myInnerEl.cloneNode());
+              
+              assert.lengthOf(otherEl.childNodes, 1);
+              assert.equal(otherEl.childNodes[0].className, 'other-inner-class');
+            });
+          });
+          
+          describe('should add array of children to both elements', function () {                         
+            it('should add two children to first element', function () {              
+              match.append([myInnerEl, myInnerEl.cloneNode()]);
+              
+              assert.lengthOf(myEl1.childNodes, 3);
+              assert.equal(myEl1.childNodes[1].className, 'my-inner-class');
+              assert.equal(myEl1.childNodes[2].className, 'my-inner-class');
+            });
+            it('should add two children to second element', function () {              
+              match.append([myInnerEl, myInnerEl.cloneNode()]);
+              
+              assert.lengthOf(myEl1.childNodes, 3);
+              assert.equal(myEl2.childNodes[1].className, 'my-inner-class');
+              assert.equal(myEl2.childNodes[2].className, 'my-inner-class');
+            });
+            it('should not add child to other element', function () {              
+              match.append([myInnerEl, myInnerEl.cloneNode()]);
               
               assert.lengthOf(otherEl.childNodes, 1);
               assert.equal(otherEl.childNodes[0].className, 'other-inner-class');

@@ -31,7 +31,7 @@ var $ = function(selector){
       var items = arguments;
       return result.each(function(i){
         for (var i = 0; i < items.length; i++){
-          if (items[i].toString() == '[object Array]' || items[i].toString() == '[object NodeList]') {
+          if (items[i].length) {
             for (var j = 0; j < items[i].length; j++){
               this.appendChild(items[i][j].cloneNode());             
             }
