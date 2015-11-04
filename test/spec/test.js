@@ -412,6 +412,40 @@
             assert.equal(res, match)
           });
         });
+        
+        describe('data', function () {
+          describe('should return html5 data-* attribute', function () {
+            var dataMatch;
+            beforeEach(function() {
+              myEl1.innerHTML = "<div class=\'data-el\' data-role=\'page\' data-last-value=\'43\' data-hidden=\'true\' data-options=\'{\"name\":\"John\"}\';></div>"  
+                                        + "<div class=\'data-el\' data-role=\'page2\' data-last-value=\'44\' data-hidden=\'false\' data-options=\'{\"name\":\"Kate\"}\';></div>";       
+              dataMatch = $('.data-el');
+            });
+            it('should return native value', function () {
+              var res = dataMatch.data('role');
+              
+              assert.equal(res, 'page')
+            });
+            
+            it('should return native value', function () {
+              var res = dataMatch.data('lastValue');
+              
+              assert.equal(res, '43')
+            });
+            
+            it('should return native value', function () {
+              var res = dataMatch.data('hidden');
+              
+              assert.equal(res, true)
+            });
+            
+            it('should return native value', function () {
+              var res = dataMatch.data('options');
+              
+              expect(res).to.deep.equal({name: "John"});
+            });
+          });
+        });
       });
     });
   });

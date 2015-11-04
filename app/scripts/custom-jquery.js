@@ -2,10 +2,13 @@ var $ = function(selector){
   var hasClass = function(element, cls) {
     return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
   }
-  var cssToCamelCase = function(cssString){
-    return cssString.replace(/-([a-z])/gi, function(s, group1) {
+  var hyphenToCamelCase = function(hyphen){
+    return hyphen.replace(/-([a-z])/gi, function(s, group1) {
         return group1.toUpperCase();
     });
+  }
+  var camelCaseToHyphen = function(camelCase){
+    return camelCase.replace(/\W+/g, '-').replace(/([a-z\d])([A-Z])/g, '$1-$2').toLowerCase();
   }
   var result = selector instanceof HTMLElement ? [selector] : document.querySelectorAll(selector);
   var resultChildren = [];
@@ -77,12 +80,20 @@ var $ = function(selector){
       } else if (typeof arg == 'string') {
         var funRes;
         if (result.length)
-          funRes = result[0].style[cssToCamelCase(arg)]
+          funRes = result[0].style[hyphenToCamelCase(arg)]
         return funRes;
       }
     },
-    data: function(){
-      
+    data: function(dataAttr){
+      var funRes;
+      if (result.length)
+        funRes = result[0].getAttribute('data-' + camelCaseToHyphen(dataAttr));
+      try {
+        return JSON.parse(funRes);
+      }
+      catch (err) {
+        return funRes;
+      }
     },
     on: function(){
       
