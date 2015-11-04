@@ -11,7 +11,6 @@ var $ = function(selector){
     return camelCase.replace(/\W+/g, '-').replace(/([a-z\d])([A-Z])/g, '$1-$2').toLowerCase();
   }
   var result = selector instanceof HTMLElement ? [selector] : document.querySelectorAll(selector);
-  var resultChildren = [];
   result.each = function(callback){
     for (var i = 0; i < result.length; i++){
       if (callback.call(result[i], i) === false){
@@ -66,6 +65,8 @@ var $ = function(selector){
       return funRes;
     },
     children: function(){
+      var resultChildren = [];
+      Object.assign(resultChildren, result);
       resultChildren.length = 0;
       result.each(function(i){
         Array.prototype.push.apply(resultChildren, this.childNodes)
@@ -100,14 +101,18 @@ var $ = function(selector){
         return funRes;
       }
     },
-    on: function(){
-      
+    on: function(eventName, callback){
+      return result.each(function(i){
+        this.addEventListener(eventName, callback);
+      });
     },
-    one: function(){
-      
+    one: function(eventName, callback){
+      var onceCallbackFunction = function(){
+        callback(arguments);
+        this.removeEventListener(eventName, onceCallbackFunction);
+      }
+      return this.on(eventName, onceCallbackFunction);
     }
   });
-  Object.assign(resultChildren, result);
-  resultChildren.length = 0;
   return result;
 }

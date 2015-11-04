@@ -1,6 +1,23 @@
 (function () {
   'use strict';
-
+  var fireEvent = function(element, event) {
+      var evt;
+      var isString = function(it) {
+          return typeof it == "string" || it instanceof String;
+      }
+      element = (isString(element)) ? document.getElementById(element) : element;
+      if (document.createEventObject) {
+          // dispatch for IE
+          evt = document.createEventObject();
+          return element.fireEvent('on' + event, evt)
+      }
+      else {
+          // dispatch for firefox + others
+          evt = document.createEvent("HTMLEvents");
+          evt.initEvent(event, true, true); // event type,bubbling,cancelable
+          return !element.dispatchEvent(evt);
+      }
+  }
   describe('jQuery call', function () {
     it('should be a function', function () {
       var node = $;
@@ -497,23 +514,108 @@
               assert.equal(res, match)
             });
           });
-        });
-        
-        describe('should get data which where already set', function () {
-          var dataMatch, myRes1, myRes2;
-          beforeEach(function() {
-            myEl1.innerHTML = "<div class=\'data-el\' data-role=\'page\' data-last-value=\'43\' data-hidden=\'true\' data-options=\'{\"name\":\"John\"}\';></div>"  
-                                      + "<div class=\'data-el\' data-role=\'page2\' data-last-value=\'44\' data-hidden=\'false\' data-options=\'{\"name\":\"Kate\"}\';></div>";       
-            dataMatch = $('.data-el');
-            myRes1 = dataMatch[0];
-            myRes2 = dataMatch[1];
+          describe('should get data which where already set', function () {
+            var dataMatch, myRes1, myRes2;
+            beforeEach(function() {
+              myEl1.innerHTML = "<div class=\'data-el\' data-role=\'page\' data-last-value=\'43\' data-hidden=\'true\' data-options=\'{\"name\":\"John\"}\';></div>"  
+                                        + "<div class=\'data-el\' data-role=\'page2\' data-last-value=\'44\' data-hidden=\'false\' data-options=\'{\"name\":\"Kate\"}\';></div>";       
+              dataMatch = $('.data-el');
+              myRes1 = dataMatch[0];
+              myRes2 = dataMatch[1];
+            });
+                        
+            it('should set string value to first element', function () {
+              dataMatch.data('role', 'new-role');
+              
+              var res = dataMatch.data('role'); 
+              assert.equal(res, 'new-role')
+            });
           });
-                      
-          it('should set string value to first element', function () {
-            dataMatch.data('role', 'new-role');
+        });
+        describe('on', function () {
+          it('should trigger event for first element', function () {
+            var eventTriggerCount = 0;
+            match.on('click', function(){
+              eventTriggerCount++;
+            });
             
-            var res = dataMatch.data('role'); 
-            assert.equal(res, 'new-role')
+            fireEvent(myEl1, 'click');
+            assert.equal(eventTriggerCount, 1);
+          });
+          
+          it('should trigger event for second element', function () {
+            var eventTriggerCount = 0;
+            match.on('click', function(){
+              eventTriggerCount++;
+            });
+            
+            fireEvent(myEl2, 'click');
+            assert.equal(eventTriggerCount, 1);
+          });
+          
+          it('should trigger event twice for first element', function () {
+            var eventTriggerCount = 0;
+            match.on('click', function(){
+              eventTriggerCount++;
+            });
+            
+            fireEvent(myEl1, 'click');
+            fireEvent(myEl1, 'click');
+            assert.equal(eventTriggerCount, 2);
+          });
+          
+          it('should trigger event twice for second element', function () {
+            var eventTriggerCount = 0;
+            match.on('click', function(){
+              eventTriggerCount++;
+            });
+            
+            fireEvent(myEl2, 'click');
+            fireEvent(myEl2, 'click');
+            assert.equal(eventTriggerCount, 2);
+          });
+        });
+        describe('one', function () {
+          it('should trigger event for first element', function () {
+            var eventTriggerCount = 0;
+            match.one('click', function(){
+              eventTriggerCount++;
+            });
+            
+            fireEvent(myEl1, 'click');
+            assert.equal(eventTriggerCount, 1);
+          });
+          
+          it('should trigger event for second element', function () {
+            var eventTriggerCount = 0;
+            match.one('click', function(){
+              eventTriggerCount++;
+            });
+            
+            fireEvent(myEl2, 'click');
+            assert.equal(eventTriggerCount, 1);
+          });
+          
+          it('should trigger event once for first element', function () {
+            var eventTriggerCount = 0;
+            match.one('click', function(){
+              eventTriggerCount++;
+            });
+            
+            fireEvent(myEl1, 'click');
+            fireEvent(myEl1, 'click');
+            assert.equal(eventTriggerCount, 1);
+          });
+          
+          it('should trigger event once for second element', function () {
+            var eventTriggerCount = 0;
+            match.one('click', function(){
+              eventTriggerCount++;
+            });
+            
+            fireEvent(myEl2, 'click');
+            fireEvent(myEl2, 'click');
+            assert.equal(eventTriggerCount, 1);
           });
         });
       });
